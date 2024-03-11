@@ -1,24 +1,49 @@
 "use client";
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { FaSearch } from "react-icons/fa";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isHomePage, setIsHomePage] = useState(true); 
+
+ 
+  const handlePageChange = () => {
+    setIsHomePage(window.location.pathname === "/");
+  };
+
+  useEffect(() => {
+    handlePageChange();
+
+    const unlisten = () => {
+      window.removeEventListener("popstate", handlePageChange);
+      window.removeEventListener("pushState", handlePageChange);
+    };
+
+    window.addEventListener("popstate", handlePageChange);
+    window.addEventListener("pushState", handlePageChange);
+
+    return unlisten;
+  }, []);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
 
   return (
-    <nav className="bg-gradient-to-r pt-10 from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% p-4 ">
-      <div className=" flex justify-between items-center px-24 py-2 fixed top-0 container p-4 w-full z-50">
+    <nav
+      className={`${
+        isHomePage
+          ? "bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90%"
+          : "bg-emerald-500"
+      } pt-10 p-4`}
+    >
+      <div className="container flex justify-between items-center px-24 py-2 fixed top-0 w-full z-50">
         <div className="flex items-center">
           <Link href={"/"}>
             <img
               className="h-8 w-8 mr-2"
-              src="https://www.shutterstock.com/search/fund-logo" // Replace with your logo image
+              src="https://www.shutterstock.com/search/fund-logo" 
               alt="Fundlt Logo"
             />
           </Link>
@@ -30,8 +55,7 @@ const Navbar = () => {
           </Link>
         </div>
 
-        {/* Search bar */}
-        <div className="hidden md:flex items-center relative ">
+        <div className="hidden md:flex items-center relative">
           <input
             type="text"
             placeholder="search for campaigns"
@@ -42,7 +66,6 @@ const Navbar = () => {
           </button>
         </div>
 
-        {/* Desktop menu */}
         <ul className="hidden md:flex space-x-7 text-white items-center">
           <li>
             <Link href="/">
@@ -59,7 +82,7 @@ const Navbar = () => {
             </Link>
           </li>
           <li>
-            <Link href="/donate">
+            <Link href="/create">
               <span className="hover:text-black hover:text-opacity-20 font-poppins text-lg font-medium ">
                 Create campaign
               </span>
@@ -67,12 +90,11 @@ const Navbar = () => {
           </li>
           <li>
             <button className="transition ease-in-out delay-150 font-bold  bg-[#005F69] text-[#F7F7F2]  hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300 font-poppins px-4 py-2 rounded-full">
-              Login
+              signup/Login
             </button>
           </li>
         </ul>
 
-        {/* Hamburger menu for mobile responsiveness */}
         <button className="md:hidden focus:outline-none" onClick={toggleMenu}>
           <svg
             className="h-6 w-6 text-white"
@@ -129,8 +151,6 @@ const Navbar = () => {
             </ul>
           ) : null}
         </button>
-
-        {/* Mobile menu */}
       </div>
     </nav>
   );

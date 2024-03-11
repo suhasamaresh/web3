@@ -1,10 +1,12 @@
 import Image from "next/image";
 import Hero from "@/components/hero";
+import Browsec from "@/components/browsec";
 
 export default function Home() {
   return (
-    <div className=" ">
+    <div className="">
       <Hero /> 
+      <Browsec />
     </div>
   );
 }
