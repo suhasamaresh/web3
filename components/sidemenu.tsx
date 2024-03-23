@@ -15,7 +15,7 @@ const Sidemenu = () => {
           <div className="px-2">
             <div className="py-4">
               <a
-                href="#"
+                href="/"
                 className="group relative flex justify-center rounded   px-2 py-1.5 text-gray-400"
               >
                 <AiOutlineHome className="size-5 opacity-75 text-gray-400" />
@@ -29,7 +29,7 @@ const Sidemenu = () => {
             {/* Add other menu items */}
             <div className="py-4">
               <a
-                href="#"
+                href="/browse"
                 className="group relative flex justify-center rounded  px-2 py-1.5 text-gray-400"
               >
                 <AiOutlineNotification className="size-5 opacity-75 text-gray-400" />
@@ -57,7 +57,7 @@ const Sidemenu = () => {
             {/* Profile */}
             <div className="py-4">
               <a
-                href="#"
+                href="/Dashboard"
                 className="group relative flex justify-center rounded   px-2 py-1.5 text-gray-400"
               >
                 <AiOutlineUser className="size-5 opacity-75 text-gray-400" />

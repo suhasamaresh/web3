@@ -75,7 +75,7 @@ const Navbar = () => {
             </Link>
           </li>
           <li>
-            <Link href="/browse-campaigns">
+            <Link href="/browse">
               <span className="hover:text-black hover:text-opacity-20 font-poppins text-lg font-medium ">
                 Browse Campaigns
               </span>
