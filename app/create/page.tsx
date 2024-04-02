@@ -1,6 +1,5 @@
 // Import necessary modules and components
 "use client";
-// Import necessary modules and components
 import React, { useState } from "react";
 import Sidemenu from "@/components/sidemenu";
 import { ethers } from "ethers";
@@ -8,20 +7,17 @@ import CampaignContract from "@/contracts/CampaignContract.json";
 import firebase from "firebase/compat/app";
 import "firebase/compat/storage";
 
-
 const firebaseConfig = {
   apiKey: "AIzaSyBkmlxE9CAnIyM4sV1g1MRhnYWylwxKjdU",
   authDomain: "web3-c0dda.firebaseapp.com",
   projectId: "web3-c0dda",
   storageBucket: "web3-c0dda.appspot.com",
   messagingSenderId: "1063778621567",
-  appId: "1:1063778621567:web:e5c970491d8ef662b9474a",
-  measurementId: "G-C5H78S23QV"
+  appId: "1:1063778621567:web:c6231c91d82021b4b9474a",
+  measurementId: "G-QPT7384K1Y"
 };
 
-// Initialize Firebase
-import "firebase/storage"; // Import Firebase storage module
-
+// Initialize Firebase app if not already initialized
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
@@ -31,13 +27,6 @@ const storage = firebase.storage();
 
 // Define ABI from CampaignContract.json
 const abi = CampaignContract;
-
-// Declare global interface for window.ethereum
-declare global {
-  interface Window {
-    ethereum: any;
-  }
-}
 
 // Define Create component
 const Create = () => {
@@ -49,20 +38,18 @@ const Create = () => {
     description: "",
     goalAmount: "",
     deadline: "",
-    image: null, // Change to null for Firebase
+    image: null,
   });
 
   // Function to handle form input changes
-  const handleChange = (event: {
-    target: { files?: any; name?: any; value?: any; type?: any };
-  }) => {
+  const handleChange = (event: { target: { files?: any; name?: any; value?: any; type?: any; }; }) => {
     const { name, value, type } = event.target;
-    const val = type === "file" ? event.target.files[0] : value; // Handle file input
+    const val = type === "file" ? event.target.files[0] : value;
     setFormData({ ...formData, [name]: val });
   };
 
   // Function to handle form submission
-  const handleSubmit = async (event: { preventDefault: () => void }) => {
+  const handleSubmit = async (event: { preventDefault: () => void; }) => {
     event.preventDefault();
 
     try {
@@ -73,20 +60,19 @@ const Create = () => {
 
       // Initialize campaign contract instance
       const campaignContract = new ethers.Contract(
-        "0x94cdb95d1c37b4165a54cdd828c091b1177bb815",
+        "0xf4b61b64d24cbf0c815730a181a5e0a19967cf2d",
         abi,
         signer
       );
 
       // Convert deadline to timestamp
-      const deadline = new Date(formData.deadline);
-      const year = deadline.getFullYear();
-      const month = deadline.getMonth() ;
-      const day = deadline.getDate();
+      const deadlineTimestamp = Math.floor(
+        new Date(formData.deadline).getTime() / 1000
+      );
 
       // Upload image to Firebase Storage
-      const imageRef = storage.ref().child(formData.image?.name); // Add null check before accessing name property
-      await imageRef.put(formData.image); // Upload image file
+      const imageRef = storage.ref().child(formData.image?.name);
+      await imageRef.put(formData.image);
 
       // Get download URL of the uploaded image
       const imageUrl = await imageRef.getDownloadURL();
@@ -94,23 +80,18 @@ const Create = () => {
       // Get signer's address
       const address = await signer.getAddress();
 
-      console.log("Contract instance:", campaignContract);
-
-      // Create campaign with Firebase image URL
+      // Create campaign with Firebase image URL and deadline timestamp
       const receipt = await campaignContract.createCampaign(
         address,
         formData.title,
         formData.description,
         parseInt(formData.goalAmount),
-        year,
-        month,
-        day,
-        imageUrl // Provide the Firebase image URL
+        deadlineTimestamp,
+        imageUrl
       );
 
       // Log success and reset form data
       console.log("Campaign created successfully:", receipt);
-      console.log(deadline);
       setSuccessfulSubmit(true);
 
       setFormData({
@@ -119,7 +100,7 @@ const Create = () => {
         description: "",
         goalAmount: "",
         deadline: "",
-        image: null, // Reset image state
+        image: null,
       });
     } catch (error) {
       console.error("Failed to create campaign:", error);
@@ -138,6 +119,8 @@ const Create = () => {
             </h1>
           </div>
           <form onSubmit={handleSubmit}>
+            {/* Form inputs */}
+            {/* Your existing form inputs go here */}
             <div className="mt-4">
               <h3 className="text-[#808191]">Image*</h3>
               <input
@@ -147,7 +130,6 @@ const Create = () => {
                 className="input-field bg-transparent placeholder:text-[#808191] border-[#808191] border-2 rounded-xl p-2 w-full focus:outline-none focus:border-emerald-500 text-white"
               />
             </div>
-            {/* Other form fields */}
             <div className="md:flex justify-between">
               <div className="mt-4">
                 <h3 className="text-[#808191] font-epilogue">Name*</h3>
@@ -196,10 +178,10 @@ const Create = () => {
                 value={formData.goalAmount}
                 onChange={handleChange}
                 placeholder="Goal Amount"
-                className="input-field bg-transparent placeholder:text-[#808191] border-[#808191] border-2 rounded-xl p-2 w
-                -full focus:outline-none focus:border-emerald-500 text-white"
+                className="input-field bg-transparent placeholder:text-[#808191] border-[#808191] border-2 rounded-xl p-2 w-full focus:outline-none focus:border-emerald-500 text-white"
               />
             </div>
+
             <div className="mt-4">
               <h3 className="text-[#808191]">Deadline*</h3>
               <input

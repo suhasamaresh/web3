@@ -1,5 +1,30 @@
 [
 	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "donor",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "campaignId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "DonationReceived",
+		"type": "event"
+	},
+	{
 		"inputs": [],
 		"name": "CampaignCount",
 		"outputs": [
@@ -44,7 +69,7 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "amountcollected",
+				"name": "amountCollected",
 				"type": "uint256"
 			},
 			{
@@ -90,17 +115,7 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "year",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "month",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "day",
+				"name": "_deadline",
 				"type": "uint256"
 			},
 			{
@@ -238,7 +253,7 @@
 					},
 					{
 						"internalType": "uint256",
-						"name": "amountcollected",
+						"name": "amountCollected",
 						"type": "uint256"
 					},
 					{
@@ -270,6 +285,25 @@
 				"internalType": "struct CrowdFunding.Campaign[]",
 				"name": "",
 				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_id",
+				"type": "uint256"
+			}
+		],
+		"name": "getCurrentDonatedAmount",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
