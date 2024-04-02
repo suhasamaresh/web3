@@ -60,7 +60,7 @@ const Create = () => {
 
       // Initialize campaign contract instance
       const campaignContract = new ethers.Contract(
-        "0xf4b61b64d24cbf0c815730a181a5e0a19967cf2d",
+        "0x99310f5F0D1dE76530E4Aab2D584B6b495eBd8E5",
         abi,
         signer
       );

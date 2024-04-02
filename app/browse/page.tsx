@@ -22,7 +22,7 @@ const Page = () => {
   const fetchData = async () => {
     try {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const contractAddress = "0xf4b61b64d24cbf0c815730a181a5e0a19967cf2d"; // Replace with your actual contract address
+      const contractAddress = "0x99310f5F0D1dE76530E4Aab2D584B6b495eBd8E5"; // Replace with your actual contract address
       const contract = new ethers.Contract(contractAddress, abi, provider);
 
       const startIndex = (currentPage - 1) * campaignsPerPage;

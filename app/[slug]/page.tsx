@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import CampaignContract from "@/contracts/CampaignContract.json";
 import { ethers } from "ethers";
@@ -26,7 +26,7 @@ const CampaignDetails = () => {
 
   useEffect(() => {
     // Check if MetaMask is installed
-    if (window.ethereum) {
+    if (typeof window !== "undefined" && window.ethereum) {
       // Handle user switching accounts
       window.ethereum.on("accountsChanged", () => {
         window.location.reload();
@@ -43,18 +43,16 @@ const CampaignDetails = () => {
     }
   }, [campaign]); // Call this effect whenever campaign changes
 
-  const extractSlugFromPathName = (pathname: string) => {
+  const extractSlugFromPathName = (pathname) => {
     const parts = pathname.split("/");
     return parts[parts.length - 1];
   };
 
-  const fetchCampaignDetails = async (slug: string) => {
+  const fetchCampaignDetails = async (slug) => {
     try {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const contractAddress = "0xf4b61b64d24cbf0c815730a181a5e0a19967cf2d";
+      const contractAddress = "0x99310f5f0d1de76530e4aab2d584b6b495ebd8e5";
       const contract = new ethers.Contract(contractAddress, abi, provider);
-       
-      console.log(slug);
 
       const campaignDetails = await contract.getCampaign(slug);
 
@@ -62,8 +60,8 @@ const CampaignDetails = () => {
         owner: campaignDetails[0],
         title: campaignDetails[1],
         description: campaignDetails[2],
-        target: campaignDetails[3].toNumber(),
-        amountCollected: campaignDetails[4].toNumber(),
+        target: campaignDetails[3].toString(),
+        amountCollected: campaignDetails[4].toString(),
         deadline: campaignDetails[5].toNumber(),
         image: campaignDetails[6],
         open: campaignDetails[7],
@@ -85,18 +83,16 @@ const CampaignDetails = () => {
       }
 
       const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const contractAddress = "0xf4b61b64d24cbf0c815730a181a5e0a19967cf2d";
+      const contractAddress = "0x99310f5F0D1dE76530E4Aab2D584B6b495eBd8E5";
       const contract = new ethers.Contract(contractAddress, abi, provider);
-      console.log(slug);
 
       // Access the slug state here
-      const donatedAmount = await contract.getCurrentDonatedAmount(slug);
+      const donatedAmountWei = await contract.getCurrentDonatedAmount(slug);
 
-      if (donatedAmount !== undefined) {
-        setCurrentDonatedAmount(donatedAmount);
-      } else {
-        console.log("Received undefined value for donated amount");
-      }
+      // Convert Wei to Ether
+      const donatedAmountEth = ethers.utils.formatEther(donatedAmountWei);
+
+      setCurrentDonatedAmount(Number(donatedAmountEth));
     } catch (error) {
       console.error("Error fetching current donated amount:", error);
     }
@@ -124,7 +120,7 @@ const CampaignDetails = () => {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
 
-      const contractAddress = "0x1d306995e2707a22ff26e8dd4ecd8c43e2257221";
+      const contractAddress = "0x99310f5F0D1dE76530E4Aab2D584B6b495eBd8E5";
       const contract = new ethers.Contract(contractAddress, abi, signer);
 
       const amountInEther = parseFloat(donationAmount);
@@ -144,7 +140,7 @@ const CampaignDetails = () => {
       };
 
       // Make sure to include overrides parameter in the contract call
-      const transaction = await contract.donate(amountInWei, overrides);
+      const transaction = await contract.donate(slug, overrides);
 
       console.log("Donation transaction:", transaction);
     } catch (error) {
@@ -159,7 +155,7 @@ const CampaignDetails = () => {
   const progress =
     ((campaign.amountCollected + currentDonatedAmount) / campaign.target) * 100;
 
-  function convertUnixTimestampToDate(unixTimestamp: number) {
+  function convertUnixTimestampToDate(unixTimestamp) {
     // Multiply by 1000 to convert from seconds to milliseconds
     const date = new Date(unixTimestamp * 1000);
 
@@ -177,13 +173,15 @@ const CampaignDetails = () => {
     return formattedDate;
   }
 
+  const amountcollected = ethers.utils.formatEther(campaign.amountCollected);
+
   return (
     <div>
       <h1>{campaign.title}</h1>
       <p>{campaign.description}</p>
       <p>Owner: {campaign.owner}</p>
       <p>Target: {campaign.target}</p>
-      <p>Amount Collected: {campaign.amountCollected.toString()}</p>
+      <p>Amount Collected: {amountcollected.toString()}</p>
       <p>Current Donated Amount: {currentDonatedAmount.toString()}</p>
       <progress value={progress} max="100"></progress>
       <p>Deadline: {convertUnixTimestampToDate(campaign.deadline)}</p>
