@@ -83,16 +83,12 @@ const Navbar = () => {
           </li>
           <li>
             <Link href="/create">
-              <span className="hover:text-black hover:text-opacity-20 font-poppins text-lg font-medium ">
+              <span className="transition ease-in-out delay-150 font-bold  bg-[#005F69] text-[#F7F7F2]  hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300 font-poppins px-4 py-3 rounded-full">
                 Create campaign
               </span>
             </Link>
           </li>
-          <li>
-            <button className="transition ease-in-out delay-150 font-bold  bg-[#005F69] text-[#F7F7F2]  hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300 font-poppins px-4 py-2 rounded-full">
-              signup/Login
-            </button>
-          </li>
+          
         </ul>
 
         <button className="md:hidden focus:outline-none" onClick={toggleMenu}>

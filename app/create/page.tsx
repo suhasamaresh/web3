@@ -8,27 +8,19 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBkmlxE9CAnIyM4sV1g1MRhnYWylwxKjdU",
-  authDomain: "web3-c0dda.firebaseapp.com",
-  projectId: "web3-c0dda",
-  storageBucket: "web3-c0dda.appspot.com",
-  messagingSenderId: "1063778621567",
-  appId: "1:1063778621567:web:c6231c91d82021b4b9474a",
-  measurementId: "G-QPT7384K1Y"
+  apiKey: "AIzaSyBCQpxionrawVX5NjhHSkhS-Vh7Fizj0IA",
+  authDomain: "web3-61c0d.firebaseapp.com",
+  projectId: "web3-61c0d",
+  storageBucket: "web3-61c0d.appspot.com",
+  messagingSenderId: "395710420340",
+  appId: "1:395710420340:web:cddf6505b5bc9cc6678821",
+  measurementId: "G-JXTJ7CLHNG",
 };
 
-// Initialize Firebase app if not already initialized
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
 
-// Firebase storage instance
-const storage = firebase.storage();
-
-// Define ABI from CampaignContract.json
-const abi = CampaignContract;
-
-// Define Create component
 const Create = () => {
   // State variables
   const [successfulSubmit, setSuccessfulSubmit] = useState(false);
@@ -42,14 +34,15 @@ const Create = () => {
   });
 
   // Function to handle form input changes
-  const handleChange = (event: { target: { files?: any; name?: any; value?: any; type?: any; }; }) => {
+  const handleChange = (event) => {
     const { name, value, type } = event.target;
     const val = type === "file" ? event.target.files[0] : value;
     setFormData({ ...formData, [name]: val });
   };
 
   // Function to handle form submission
-  const handleSubmit = async (event: { preventDefault: () => void; }) => {
+  // Function to handle form submission
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     try {
@@ -59,11 +52,15 @@ const Create = () => {
       const signer = provider.getSigner();
 
       // Initialize campaign contract instance
+      const abi = CampaignContract;
       const campaignContract = new ethers.Contract(
-        "0x99310f5F0D1dE76530E4Aab2D584B6b495eBd8E5",
+        "0x6ed810a3f7c9c36370671b8bd6751be7519682c6",
         abi,
         signer
       );
+
+      // Get signer's address
+      const address = await signer.getAddress();
 
       // Convert deadline to timestamp
       const deadlineTimestamp = Math.floor(
@@ -71,37 +68,42 @@ const Create = () => {
       );
 
       // Upload image to Firebase Storage
-      const imageRef = storage.ref().child(formData.image?.name);
-      await imageRef.put(formData.image);
+      const storageRef = firebase.storage().ref();
+      if (formData.image) {
+        const file = formData.image;
+        // Get the number of existing campaigns to determine the index of the new image
+        const campaignsArray = await campaignContract.getCampaigns();
+        const imageIndex = campaignsArray.length;
+        const imageRef = storageRef.child(
+          `image_${imageIndex}.${file.name.split(".").pop()}`
+        );
+        await imageRef.put(file);
+        const imageUrl = await imageRef.getDownloadURL();
+        console.log("Image uploaded successfully:", imageUrl);
 
-      // Get download URL of the uploaded image
-      const imageUrl = await imageRef.getDownloadURL();
+        // Create the campaign with image URL
+        const receipt = await campaignContract.createCampaign(
+          address,
+          formData.title,
+          formData.description,
+          parseInt(formData.goalAmount),
+          deadlineTimestamp,
+          imageUrl
+        );
 
-      // Get signer's address
-      const address = await signer.getAddress();
 
-      // Create campaign with Firebase image URL and deadline timestamp
-      const receipt = await campaignContract.createCampaign(
-        address,
-        formData.title,
-        formData.description,
-        parseInt(formData.goalAmount),
-        deadlineTimestamp,
-        imageUrl
-      );
-
-      // Log success and reset form data
-      console.log("Campaign created successfully:", receipt);
-      setSuccessfulSubmit(true);
-
-      setFormData({
-        name: "",
-        title: "",
-        description: "",
-        goalAmount: "",
-        deadline: "",
-        image: null,
-      });
+        // Log success and reset form data
+        console.log("Campaign created successfully:", receipt);
+        setSuccessfulSubmit(true);
+        setFormData({
+          name: "",
+          title: "",
+          description: "",
+          goalAmount: "",
+          deadline: "",
+          image: null,
+        });
+      }
     } catch (error) {
       console.error("Failed to create campaign:", error);
     }
@@ -120,7 +122,6 @@ const Create = () => {
           </div>
           <form onSubmit={handleSubmit}>
             {/* Form inputs */}
-            {/* Your existing form inputs go here */}
             <div className="mt-4">
               <h3 className="text-[#808191]">Image*</h3>
               <input
@@ -130,6 +131,7 @@ const Create = () => {
                 className="input-field bg-transparent placeholder:text-[#808191] border-[#808191] border-2 rounded-xl p-2 w-full focus:outline-none focus:border-emerald-500 text-white"
               />
             </div>
+            {/* Other form inputs */}
             <div className="md:flex justify-between">
               <div className="mt-4">
                 <h3 className="text-[#808191] font-epilogue">Name*</h3>
@@ -193,6 +195,7 @@ const Create = () => {
                 className="input-field bg-transparent placeholder:text-[#808191] border-[#808191] border-2 rounded-xl p-2 w-full focus:outline-none focus:border-emerald-500 text-white"
               />
             </div>
+            {/* Submit button */}
             <div className="mt-4">
               <button
                 type="submit"
@@ -201,15 +204,14 @@ const Create = () => {
                 Submit Campaign
               </button>
             </div>
-            <div>
-              {successfulSubmit && (
-                <div className=" w-[300px] rounded-xl text-center">
-                  <p className="text-emerald-500 rounded-lg mt-4 border-2 font-epilogue">
-                    Campaign created successfully!
-                  </p>
-                </div>
-              )}
-            </div>
+            {/* Success message */}
+            {successfulSubmit && (
+              <div className="w-[300px] rounded-xl text-center">
+                <p className="text-emerald-500 rounded-lg mt-4 border-2 font-epilogue">
+                  Campaign created successfully!
+                </p>
+              </div>
+            )}
           </form>
         </div>
       </div>
@@ -217,5 +219,4 @@ const Create = () => {
   );
 };
 
-// Export Create component
 export default Create;

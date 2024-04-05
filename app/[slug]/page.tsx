@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import CampaignContract from "@/contracts/CampaignContract.json";
 import { ethers } from "ethers";
+import Sidemenu from "@/components/sidemenu";
 
 const abi = CampaignContract;
 
@@ -51,7 +52,7 @@ const CampaignDetails = () => {
   const fetchCampaignDetails = async (slug) => {
     try {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const contractAddress = "0x99310f5f0d1de76530e4aab2d584b6b495ebd8e5";
+      const contractAddress = "0x8941282b7d7828d4795051ee71f334f4b9c16ca2";
       const contract = new ethers.Contract(contractAddress, abi, provider);
 
       const campaignDetails = await contract.getCampaign(slug);
@@ -83,7 +84,7 @@ const CampaignDetails = () => {
       }
 
       const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const contractAddress = "0x99310f5F0D1dE76530E4Aab2D584B6b495eBd8E5";
+      const contractAddress = "0x6ed810a3f7c9c36370671b8bd6751be7519682c6";
       const contract = new ethers.Contract(contractAddress, abi, provider);
 
       // Access the slug state here
@@ -120,7 +121,7 @@ const CampaignDetails = () => {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
 
-      const contractAddress = "0x99310f5F0D1dE76530E4Aab2D584B6b495eBd8E5";
+      const contractAddress = "0x6ed810a3f7c9c36370671b8bd6751be7519682c6";
       const contract = new ethers.Contract(contractAddress, abi, signer);
 
       const amountInEther = parseFloat(donationAmount);
@@ -176,24 +177,35 @@ const CampaignDetails = () => {
   const amountcollected = ethers.utils.formatEther(campaign.amountCollected);
 
   return (
-    <div>
-      <h1>{campaign.title}</h1>
-      <p>{campaign.description}</p>
-      <p>Owner: {campaign.owner}</p>
-      <p>Target: {campaign.target}</p>
-      <p>Amount Collected: {amountcollected.toString()}</p>
-      <p>Current Donated Amount: {currentDonatedAmount.toString()}</p>
-      <progress value={progress} max="100"></progress>
-      <p>Deadline: {convertUnixTimestampToDate(campaign.deadline)}</p>
-      <input
-        type="number"
-        value={donationAmount}
-        onChange={(e) => setDonationAmount(e.target.value)}
-        placeholder="Enter donation amount (ETH)"
-      />
-      <button onClick={handleDonate}>Donate</button>
+    <div className="bg-black h-screen">
+      <div>
+        <Sidemenu />
+      </div>
+      <div className=" pl-28">
+
+        <h1 className="text-4xl text-[#808191]">{campaign.title}</h1>
+        <p className="text-2xl text-[#808191]">{campaign.description}</p>
+        <p className="text-[#808191]">Owner: {campaign.owner}</p>
+        <p className="text-[#808191]">Target: {campaign.target}</p>
+        <p className="text-[#808191]">Amount Collected: {amountcollected.toString()}</p>
+        <p className="text-[#808191]">Current Donated Amount: {currentDonatedAmount.toString()}</p>
+        <progress value={progress} max="100"></progress>
+        <p className="text-[#808191]">Deadline: {convertUnixTimestampToDate(campaign.deadline)}</p>
+        <input
+          type="number"
+          value={donationAmount}
+          onChange={(e) => setDonationAmount(e.target.value)}
+          placeholder="Enter donation amount (ETH)"
+        />
+        <button onClick={handleDonate} className="text-[#808191]">Donate</button>
+      </div>
     </div>
   );
 };
 
 export default CampaignDetails;
+
+
+
+
+
