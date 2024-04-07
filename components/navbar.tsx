@@ -5,9 +5,8 @@ import { FaSearch } from "react-icons/fa";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isHomePage, setIsHomePage] = useState(true); 
+  const [isHomePage, setIsHomePage] = useState(true);
 
- 
   const handlePageChange = () => {
     setIsHomePage(window.location.pathname === "/");
   };
@@ -34,34 +33,23 @@ const Navbar = () => {
     <nav
       className={`${
         isHomePage
-          ? "bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90%"
-          : "bg-emerald-500"
-      } pt-10 p-4`}
+          ? "bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% items-center"
+          : "bg-[#090909] items-center"
+      }  p-4`}
     >
-      <div className="container flex justify-between items-center px-24 py-2 fixed top-0 w-full z-50">
-        <div className="flex items-center">
-          <Link href={"/"}>
-            <img
-              className="h-8 w-8 mr-2"
-              src="https://www.shutterstock.com/search/fund-logo" 
-              alt="Fundlt Logo"
-            />
-          </Link>
-          <Link
-            className="text-white text-3xl font-bold font-poppins"
-            href={"/"}
-          >
-            Fundlt
-          </Link>
+      <Link href="/">
+        <div className="w-10 h-10 p-2 bg-[#1c1c24] rounded-lg">
+          <img src="/1.png" alt="logo" className=" bg-[#1c1c24] " />
         </div>
-
+      </Link>
+      <div className="container flex justify-between items-center px-24 py-4 fixed top-0 ">
         <div className="hidden md:flex items-center relative">
           <input
             type="text"
             placeholder="search for campaigns"
-            className="px-10 py-2 mr-4 border rounded-full placeholder:text-white placeholder:text-left placeholder:text-sm border-gray-300  focus:outline-none bg-transparent text-white"
+            className="px-10 py-2 mr-4 rounded-full placeholder:text-white placeholder:text-left placeholder:text-sm  bg-[#1c1c24] focus:outline-none bg- text-white"
           />
-          <button className="absolute rounded-full right-5 top-1 bg-[#005F69] text-white hover:bg-indigo-500  font-medium py-2 px-4 border border-transparent ">
+          <button className="absolute rounded-full right-5 top-1 bg-emerald-600 text-white hover:bg-indigo-500  font-medium py-2 px-4 ">
             <FaSearch />
           </button>
         </div>
@@ -83,12 +71,11 @@ const Navbar = () => {
           </li>
           <li>
             <Link href="/create">
-              <span className="transition ease-in-out delay-150 font-bold  bg-[#005F69] text-[#F7F7F2]  hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300 font-poppins px-4 py-3 rounded-full">
+              <span className="transition ease-in-out delay-150 font-bold  bg-emerald-600 text-[#F7F7F2]  hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300 font-poppins px-4 py-3 rounded-full">
                 Create campaign
               </span>
             </Link>
           </li>
-          
         </ul>
 
         <button className="md:hidden focus:outline-none" onClick={toggleMenu}>

@@ -14,21 +14,19 @@ const CampaignDetails = () => {
   const [account, setAccount] = useState("");
   const [currentDonatedAmount, setCurrentDonatedAmount] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [slug, setSlug] = useState(""); // Define slug state here
+  const [slug, setSlug] = useState("");
   const pathname = usePathname();
 
   useEffect(() => {
     const slugFromPathname = extractSlugFromPathName(pathname);
     if (slugFromPathname) {
-      setSlug(slugFromPathname); // Set the slug state when the pathname changes
+      setSlug(slugFromPathname);
       fetchCampaignDetails(slugFromPathname);
     }
   }, [pathname]);
 
   useEffect(() => {
-    // Check if MetaMask is installed
     if (typeof window !== "undefined" && window.ethereum) {
-      // Handle user switching accounts
       window.ethereum.on("accountsChanged", () => {
         window.location.reload();
       });
@@ -39,10 +37,9 @@ const CampaignDetails = () => {
 
   useEffect(() => {
     if (campaign) {
-      // Call getCurrentDonatedAmount to get the current donated amount
       getCurrentDonatedAmount();
     }
-  }, [campaign]); // Call this effect whenever campaign changes
+  }, [campaign]);
 
   const extractSlugFromPathName = (pathname) => {
     const parts = pathname.split("/");
@@ -71,7 +68,7 @@ const CampaignDetails = () => {
       };
 
       setCampaign(formattedCampaign);
-      setLoading(false); // Set loading to false once campaign details are fetched
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching campaign details:", error);
     }
@@ -87,10 +84,7 @@ const CampaignDetails = () => {
       const contractAddress = "0x6ed810a3f7c9c36370671b8bd6751be7519682c6";
       const contract = new ethers.Contract(contractAddress, abi, provider);
 
-      // Access the slug state here
       const donatedAmountWei = await contract.getCurrentDonatedAmount(slug);
-
-      // Convert Wei to Ether
       const donatedAmountEth = ethers.utils.formatEther(donatedAmountWei);
 
       setCurrentDonatedAmount(Number(donatedAmountEth));
@@ -115,7 +109,7 @@ const CampaignDetails = () => {
   const handleDonate = async () => {
     try {
       if (!connected) {
-        await connectToMetaMask(); // Connect to MetaMask if not already connected
+        await connectToMetaMask();
       }
 
       const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -129,18 +123,15 @@ const CampaignDetails = () => {
         throw new Error("Invalid donation amount");
       }
 
-      // Convert the donation amount to BigNumber format
       const amountInWei = ethers.utils.parseUnits(
         amountInEther.toString(),
         "ether"
       );
 
-      // Send donation along with calling donate function in the contract
       const overrides = {
-        value: amountInWei, // Sending ether along with the transaction
+        value: amountInWei,
       };
 
-      // Make sure to include overrides parameter in the contract call
       const transaction = await contract.donate(slug, overrides);
 
       console.log("Donation transaction:", transaction);
@@ -150,62 +141,132 @@ const CampaignDetails = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <button type="button" className="bg-indigo-500 ..." disabled>
+        <svg
+          className="animate-spin h-5 w-5 mr-3 ..."
+          viewBox="0 0 24 24"
+        ></svg>
+        Processing...
+      </button>
+    );
   }
 
   const progress =
     ((campaign.amountCollected + currentDonatedAmount) / campaign.target) * 100;
 
   function convertUnixTimestampToDate(unixTimestamp) {
-    // Multiply by 1000 to convert from seconds to milliseconds
     const date = new Date(unixTimestamp * 1000);
-
-    // Get year, month (0-indexed), day, hours, minutes, seconds, milliseconds
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Add leading zero for single-digit months
-    const day = String(date.getDate()).padStart(2, "0"); // Add leading zero for single-digit days
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
     const hours = date.getHours();
     const minutes = String(date.getMinutes()).padStart(2, "0");
     const seconds = String(date.getSeconds()).padStart(2, "0");
-
-    // Format the date in a common format (YYYY-MM-DD HH:MM:SS)
     const formattedDate = `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
-
     return formattedDate;
   }
 
   const amountcollected = ethers.utils.formatEther(campaign.amountCollected);
 
   return (
-    <div className="bg-black h-screen">
+    <div className="bg-[#090909] ">
       <div>
         <Sidemenu />
       </div>
-      <div className=" pl-28">
-
-        <h1 className="text-4xl text-[#808191]">{campaign.title}</h1>
-        <p className="text-2xl text-[#808191]">{campaign.description}</p>
-        <p className="text-[#808191]">Owner: {campaign.owner}</p>
-        <p className="text-[#808191]">Target: {campaign.target}</p>
-        <p className="text-[#808191]">Amount Collected: {amountcollected.toString()}</p>
-        <p className="text-[#808191]">Current Donated Amount: {currentDonatedAmount.toString()}</p>
-        <progress value={progress} max="100"></progress>
-        <p className="text-[#808191]">Deadline: {convertUnixTimestampToDate(campaign.deadline)}</p>
-        <input
-          type="number"
-          value={donationAmount}
-          onChange={(e) => setDonationAmount(e.target.value)}
-          placeholder="Enter donation amount (ETH)"
-        />
-        <button onClick={handleDonate} className="text-[#808191]">Donate</button>
+      <div className="pl-28 pt-12">
+        <div className="px-28">
+          <div className="flex items-center justify-between">
+            <div className="">
+              <img
+                src={campaign.image}
+                alt="Campaign"
+                className="w-[750px] h-[350px] rounded-lg"
+              />
+            </div>
+            <div className="pr-32">
+              <div className="">
+                <div className="flex flex-col">
+                  <p className="text-[#808191] mb-2 bg-[#1c1c24] rounded-lg p-3 text-center">
+                    6{" "}
+                    <div className="bg-black text-[#808191] rounded-lg text-center py-1">
+                      Days left
+                    </div>
+                  </p>
+                </div>
+                <div className="flex flex-col">
+                  <p className="text-[#808191] mb-2 bg-[#1c1c24] rounded-lg p-3 text-center">
+                    T6{" "}
+                    <div className="bg-black text-[#808191] rounded-lg text-center px-2 py-1">
+                      Total raised
+                    </div>
+                  </p>
+                </div>
+                <div className="flex flex-col">
+                  <p className="text-[#808191] mb-2 bg-[#1c1c24] rounded-lg p-3 text-center">
+                    6{" "}
+                    <div className="bg-black text-[#808191] rounded-lg text-center px-2 py-1">
+                      Total Funders
+                    </div>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center justify-between mt-10">
+            <div className="mt-10">
+              <h1 className="font-poppins font-medium text-white">CREATOR</h1>
+              <p className="text-white">{campaign.owner}</p>
+              <h1 className="font-poppins font-medium text-white pt-3">
+                TITLE
+              </h1>
+              <p className="text-[#808191]">{campaign.title}</p>
+              <h1 className="font-poppins font-medium text-white pt-3">
+                DESCRIPTION
+              </h1>
+              <p className="text-[#808191]">Story: {campaign.description}</p>
+              <h1 className="font-poppins font-medium text-white pt-3">
+                DONATORS
+              </h1>
+              <p className="text-[#808191]">
+                Funders' Addresses: {campaign.funders}
+              </p>
+            </div>
+            <div className="mt-4 w-[350px] align-middle mr-32">
+              <h1 className="text-white font-semibold mb-4">Fund</h1>
+              <div className="bg-[#1c1c24] rounded-xl w-full">
+                <h1 className="text-center text-[#808191] py-2 pt-3">
+                  Pledge without a reward
+                </h1>
+                <input
+                  type="number"
+                  value={donationAmount}
+                  onChange={(e) => setDonationAmount(e.target.value)}
+                  placeholder="(ETH)"
+                  className="border border-[#808191] ml-6 rounded-md px-5 w-[300px] focus:outline-none focus:border-emerald-500 text-black mt-3"
+                />
+                <div className="bg-black rounded-xl mt-3 px-5 pl-2 pr-2 ml-6 mr-6">
+                  <h1 className="text-white font-semibold pt-2">
+                    Back it cause you believe it
+                  </h1>
+                  <p className="text-[#808191] pt-3">
+                    Support the project for no reward. Just because it appeals
+                    to you
+                  </p>
+                </div>
+                <button
+                  onClick={handleDonate}
+                  className="text-white font-poppins font-semibold bg-indigo-500 hover:bg-emerald-600 px-5 py-2 rounded-md mt-3 w-[300px] ml-6"
+                >
+                  Donate
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
 export default CampaignDetails;
-
-
-
-
-

@@ -79,7 +79,7 @@ const Page = () => {
   };
 
   return (
-    <div className="bg-black h-screen">
+    <div className="bg-[#090909]  h-screen">
       <div>
         <Sidemenu />
       </div>
