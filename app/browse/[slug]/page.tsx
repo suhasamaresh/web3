@@ -41,18 +41,19 @@ const CampaignDetails = () => {
     }
   }, [campaign]);
 
-  const extractSlugFromPathName = (pathname) => {
+  const extractSlugFromPathName = (pathname: string) => {
     const parts = pathname.split("/");
     return parts[parts.length - 1];
   };
 
-  const fetchCampaignDetails = async (slug) => {
+  const fetchCampaignDetails = async (slug: any) => {
     try {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const contractAddress = "0x8941282b7d7828d4795051ee71f334f4b9c16ca2";
+      const contractAddress = "0x6ed810a3f7c9c36370671b8bd6751be7519682c6";
       const contract = new ethers.Contract(contractAddress, abi, provider);
-
+      const funders = await contract.getFunders(slug);
       const campaignDetails = await contract.getCampaign(slug);
+      const currentDonatedAmount = await contract.getCurrentDonatedAmount(slug);
 
       const formattedCampaign = {
         owner: campaignDetails[0],
@@ -63,8 +64,8 @@ const CampaignDetails = () => {
         deadline: campaignDetails[5].toNumber(),
         image: campaignDetails[6],
         open: campaignDetails[7],
-        funders: campaignDetails[8],
-        fundings: campaignDetails[9],
+        funders: funders,
+        fundings: currentDonatedAmount.toString(),
       };
 
       setCampaign(formattedCampaign);
@@ -118,6 +119,9 @@ const CampaignDetails = () => {
       const contractAddress = "0x6ed810a3f7c9c36370671b8bd6751be7519682c6";
       const contract = new ethers.Contract(contractAddress, abi, signer);
 
+      v
+      
+
       const amountInEther = parseFloat(donationAmount);
       if (isNaN(amountInEther)) {
         throw new Error("Invalid donation amount");
@@ -155,7 +159,7 @@ const CampaignDetails = () => {
   const progress =
     ((campaign.amountCollected + currentDonatedAmount) / campaign.target) * 100;
 
-  function convertUnixTimestampToDate(unixTimestamp) {
+  function convertUnixTimestampToDate(unixTimestamp: number) {
     const date = new Date(unixTimestamp * 1000);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -163,20 +167,21 @@ const CampaignDetails = () => {
     const hours = date.getHours();
     const minutes = String(date.getMinutes()).padStart(2, "0");
     const seconds = String(date.getSeconds()).padStart(2, "0");
-    const formattedDate = `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+    const formattedDate = `${day}-${month}-${year} | ${hours}:${minutes}:${seconds}`;
     return formattedDate;
   }
 
   const amountcollected = ethers.utils.formatEther(campaign.amountCollected);
+  const deadline = convertUnixTimestampToDate(campaign.deadline);
 
   return (
     <div className="bg-[#090909] ">
       <div>
         <Sidemenu />
       </div>
-      <div className="pl-28 pt-12">
-        <div className="px-28">
-          <div className="flex items-center justify-between">
+      <div className="lg:pl-28 pt-12">
+        <div className="lg:px-28">
+          <div className="lg:flex align-middle items-center justify-between">
             <div className="">
               <img
                 src={campaign.image}
@@ -188,15 +193,15 @@ const CampaignDetails = () => {
               <div className="">
                 <div className="flex flex-col">
                   <p className="text-[#808191] mb-2 bg-[#1c1c24] rounded-lg p-3 text-center">
-                    6{" "}
+                    {deadline}
                     <div className="bg-black text-[#808191] rounded-lg text-center py-1">
-                      Days left
+                      Deadline
                     </div>
                   </p>
                 </div>
                 <div className="flex flex-col">
                   <p className="text-[#808191] mb-2 bg-[#1c1c24] rounded-lg p-3 text-center">
-                    T6{" "}
+                    {currentDonatedAmount} ETH
                     <div className="bg-black text-[#808191] rounded-lg text-center px-2 py-1">
                       Total raised
                     </div>
@@ -204,7 +209,7 @@ const CampaignDetails = () => {
                 </div>
                 <div className="flex flex-col">
                   <p className="text-[#808191] mb-2 bg-[#1c1c24] rounded-lg p-3 text-center">
-                    6{" "}
+                    {campaign.funders.length}{" "}
                     <div className="bg-black text-[#808191] rounded-lg text-center px-2 py-1">
                       Total Funders
                     </div>
@@ -213,7 +218,7 @@ const CampaignDetails = () => {
               </div>
             </div>
           </div>
-          <div className="flex items-center justify-between mt-10">
+          <div className="lg:flex items-center justify-between mt-10">
             <div className="mt-10">
               <h1 className="font-poppins font-medium text-white">CREATOR</h1>
               <p className="text-white">{campaign.owner}</p>
@@ -229,7 +234,7 @@ const CampaignDetails = () => {
                 DONATORS
               </h1>
               <p className="text-[#808191]">
-                Funders' Addresses: {campaign.funders}
+                Funders' Addresses: {campaign.funders.join(", ")}
               </p>
             </div>
             <div className="mt-4 w-[350px] align-middle mr-32">

@@ -44,7 +44,7 @@ const Sidemenu = () => {
             <div className="py-4">
               <a
                 href="#"
-                className="group relative flex justify-center rounded   px-2 py-1.5 text-gray-400"
+                className="group relative flex justify-center rounded px-2 py-1.5 text-gray-400"
               >
                 <AiOutlineWallet className="size-5 opacity-75 text-gray-400" />
 
@@ -77,10 +77,10 @@ const Sidemenu = () => {
             type="submit"
             className="group relative flex w-full justify-center rounded-lg  text-sm text-gray-400   hover:text-gray-300"
           >
-            <AiOutlineLogout className="size-5 opacity-75 text-gray-400" />
+            <AiOutlineUser className="size-5 opacity-75 text-gray-400" />
 
             <span className="invisible absolute start-full  ms-4 -translate-y-1/2 rounded text-xs font-medium text-white group-hover:visible">
-              Logout
+              Profile
             </span>
           </button>
         </form>

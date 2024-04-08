@@ -2,139 +2,188 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { FaSearch } from "react-icons/fa";
+import { useRouter } from "next/navigation";
+import { ethers } from "ethers";
+import CampaignContract from "@/contracts/CampaignContract.json";
 
 const Navbar = () => {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const [isHomePage, setIsHomePage] = useState(true);
-
-  const handlePageChange = () => {
-    setIsHomePage(window.location.pathname === "/");
-  };
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredCampaigns, setFilteredCampaigns] = useState([]);
+  const [campaigns, setCampaigns] = useState([]);
+  const abi = CampaignContract;
 
   useEffect(() => {
-    handlePageChange();
+    const fetchCampaigns = async () => {
+      try {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const contractAddress = "0x6ed810a3f7c9c36370671b8bd6751be7519682c6";
+        const contract = new ethers.Contract(contractAddress, abi, provider);
+        const campaigns = await contract.getCampaigns();
+        console.log(campaigns);
+        const campaignsData = await Promise.all(
+          campaigns.map(async (campaign: any[], index: number) => {
+            console.log(index);
+            return {
+              id: index,
+              title: campaign[1],
+              description: campaign[2],
+              target: campaign[3].toString(),
+              amountCollected: campaign[4].toString(),
+              deadline: campaign[5].toString(),
+              image: campaign[6],
+              open: campaign[7],
+            };
+          })
+        );
 
-    const unlisten = () => {
-      window.removeEventListener("popstate", handlePageChange);
-      window.removeEventListener("pushState", handlePageChange);
+        setCampaigns(campaignsData);
+      } catch (error) {
+        console.error("Error fetching campaigns:", error);
+      }
     };
 
-    window.addEventListener("popstate", handlePageChange);
-    window.addEventListener("pushState", handlePageChange);
-
-    return unlisten;
+    fetchCampaigns();
   }, []);
+
+  useEffect(() => {
+    setFilteredCampaigns(
+      campaigns.filter((campaign) =>
+        campaign.title.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    );
+  }, [searchQuery, campaigns]);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
 
+  const handleCampaignClick = (campaignId: any) => {
+    router.push(`/browse/${campaignId}`);
+  };
+
   return (
-    <nav
-      className={`${
-        isHomePage
-          ? "bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% items-center"
-          : "bg-[#090909] items-center"
-      }  p-4`}
-    >
-      <Link href="/">
-        <div className="w-10 h-10 p-2 bg-[#1c1c24] rounded-lg">
-          <img src="/1.png" alt="logo" className=" bg-[#1c1c24] " />
+    <nav className="bg-[#090909] relative">
+      <div className="container mx-auto flex justify-between items-center px-4 md:px-0 py-4">
+        <div className="flex items-center">
+          <Link href="/">
+            <div className="flex items-center ml-5">
+              <div className="w-10 h-10 p-2 bg-[#1c1c24] rounded-lg mr-2">
+                <img src="/1.png" alt="logo" className="h-full" />
+              </div>
+            </div>
+          </Link>
+
+          <div className="hidden md:flex items-center ml-9">
+            <input
+              type="text"
+              placeholder="Search for campaigns"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="px-4 py-2 mr-4 rounded-full placeholder-white bg-[#1c1c24] focus:outline-none text-white"
+            />
+            <button className="rounded-full bg-emerald-600 text-white hover:bg-indigo-500 font-medium py-2 px-4">
+              <FaSearch />
+            </button>
+          </div>
         </div>
-      </Link>
-      <div className="container flex justify-between items-center px-24 py-4 fixed top-0 ">
-        <div className="hidden md:flex items-center relative">
-          <input
-            type="text"
-            placeholder="search for campaigns"
-            className="px-10 py-2 mr-4 rounded-full placeholder:text-white placeholder:text-left placeholder:text-sm  bg-[#1c1c24] focus:outline-none bg- text-white"
-          />
-          <button className="absolute rounded-full right-5 top-1 bg-emerald-600 text-white hover:bg-indigo-500  font-medium py-2 px-4 ">
-            <FaSearch />
+
+        <div className="flex items-center">
+          <ul className="hidden md:flex space-x-7 text-white items-center">
+            <li>
+              <Link href="/browse">
+                <span className="hover:text-grey hover:text-opacity-20 font-poppins text-lg font-medium">
+                  Browse Campaigns
+                </span>
+              </Link>
+            </li>
+            <li>
+              <Link href="/create">
+                <span className="transition mr-4 ease-in-out delay-150 font-bold bg-emerald-600 text-[#F7F7F2] hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300 font-poppins px-4 py-3 rounded-full">
+                  Create campaign
+                </span>
+              </Link>
+            </li>
+          </ul>
+
+          <button
+            className="md:hidden focus:outline-none ml-4"
+            onClick={toggleMenu}
+          >
+            <svg
+              className="h-6 w-6 text-white"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              {isOpen ? (
+                <path
+                  d="M6 18L18 6M6 6l12 12"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              ) : (
+                <path
+                  d="M4 6H20M4 12H20M4 18H20"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              )}
+            </svg>
           </button>
         </div>
+      </div>
 
-        <ul className="hidden md:flex space-x-7 text-white items-center">
+      {isOpen && (
+        <ul className="md:hidden bg-[#1c1c24] text-white w-full mt-2">
           <li>
             <Link href="/">
-              <span className="hover:text-black hover:text-opacity-20 font-poppins text-lg font-medium ">
-                Home
-              </span>
+              <div className="block py-2 px-4 hover:text-gray-400">Home</div>
             </Link>
           </li>
           <li>
-            <Link href="/browse">
-              <span className="hover:text-black hover:text-opacity-20 font-poppins text-lg font-medium ">
+            <Link href="/browse-campaigns">
+              <div className="block py-2 px-4 hover:text-gray-400">
                 Browse Campaigns
-              </span>
+              </div>
             </Link>
           </li>
           <li>
-            <Link href="/create">
-              <span className="transition ease-in-out delay-150 font-bold  bg-emerald-600 text-[#F7F7F2]  hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300 font-poppins px-4 py-3 rounded-full">
-                Create campaign
-              </span>
+            <Link href="/donate">
+              <div className="block py-2 px-4 hover:text-gray-400">Donate</div>
             </Link>
+          </li>
+          <li>
+            <button className="block py-2 px-4 bg-[#F7F7F2] text-[#005F69] hover:bg-gray-400">
+              Login
+            </button>
           </li>
         </ul>
+      )}
 
-        <button className="md:hidden focus:outline-none" onClick={toggleMenu}>
-          <svg
-            className="h-6 w-6 text-white"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            {isOpen ? (
-              <path
-                d="M6 18L18 6M6 6l12 12"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            ) : (
-              <path
-                d="M4 6H20M4 12H20M4 18H20"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            )}
-          </svg>
-          {isOpen ? (
-            <ul className="md:hidden ${isOpen ? 'block' : 'hidden'} absolute top-full left-0 bg-transparent w-full">
-              <li>
-                <Link href="/">
-                  <span className="block py-2 px-4 hover:text-gray-400 font-poppins">
-                    Home
-                  </span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/browse-campaigns">
-                  <span className="block py-2 px-4 hover:text-gray-400 font-poppins">
-                    Browse Campaigns
-                  </span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/donate">
-                  <span className="block py-2 px-4 hover:text-gray-400 font-poppins">
-                    Donate
-                  </span>
-                </Link>
-              </li>
-              <li>
-                <button className="rounded-full bg-[#F7F7F2] text-[#005F69] px-4 py-2 font-poppins">
-                  Login
-                </button>
-              </li>
-            </ul>
-          ) : null}
-        </button>
-      </div>
+      {/* Display filtered campaigns */}
+      {searchQuery && (
+        <div className="absolute top-[calc(100%+10px)] left-0 w-[350px] ml-28 bg-white rounded-lg shadow-lg overflow-hidden">
+          {filteredCampaigns.length === 0 ? (
+            <div className="px-4 py-2">No campaigns found</div>
+          ) : (
+            filteredCampaigns.map((campaign) => (
+              <div
+                key={campaign.id}
+                className="px-4 py-2 cursor-pointer hover:bg-gray-100"
+                onClick={() => handleCampaignClick(campaign.id)}
+              >
+                {campaign.title}
+              </div>
+            ))
+          )}
+        </div>
+      )}
     </nav>
   );
 };
