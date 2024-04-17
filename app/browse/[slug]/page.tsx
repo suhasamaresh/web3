@@ -173,7 +173,7 @@ const CampaignDetails = () => {
   const deadline = convertUnixTimestampToDate(campaign.deadline);
 
   return (
-    <div className="bg-[#090909] mt-16 items-center mb">
+    <div className="bg-[#090909] mt-16 items-center pb-10">
       <div>
         <Sidemenu />
       </div>
@@ -184,10 +184,10 @@ const CampaignDetails = () => {
               <img
                 src={campaign.image}
                 alt="Campaign"
-                className="w-[750px] h-[350px] rounded-lg"
+                className="w-[750px] h-[350px] rounded-lg pl-20 pr-20 lg:pl-0 lg:pr-0"
               />
             </div>
-            <div className="pr-32">
+            <div className="pr-32 pl-20 ml-12 lg:ml-0 lg:pl-0 pt-4 lg:pt-0">
               <div className="">
                 <div className="flex flex-col">
                   <p className="text-[#808191] mb-2 bg-[#1c1c24] rounded-lg p-3 text-center">
@@ -216,7 +216,7 @@ const CampaignDetails = () => {
               </div>
             </div>
           </div>
-          <div className="lg:flex items-center justify-between mt-10">
+          <div className="lg:flex items-center justify-between mt-10 pl-10 pr-10 lg:pl-0 lg:pr-0">
             <div className="mt-10">
               <h1 className="font-poppins font-medium text-white">CREATOR</h1>
               <p className="text-white">{campaign.owner}</p>
@@ -235,7 +235,7 @@ const CampaignDetails = () => {
                 Funders' Addresses: {campaign.funders.join(", ")}
               </p>
             </div>
-            <div className="mt-4 w-[350px] align-middle mr-32">
+            <div className="mt-4 w-[350px] align-middle mr-32 ml-5 lg:ml-0">
               <h1 className="text-white font-semibold mb-4">Fund</h1>
               <div className="bg-[#1c1c24] rounded-xl w-full">
                 <h1 className="text-center text-[#808191] py-2 pt-3">
