@@ -9,7 +9,7 @@ import {
 
 const Sidemenu = () => {
   return (
-    <div className="hidden md:visible fixed h-screen w-16 md:flex flex-col ml-2 justify-between border-r border-[#3a3a43] rounded-2xl bg-[#1c1c24]">
+    <div className="hidden lg:visible fixed h-[600px] mt-3 w-16 md:flex flex-col ml-2 justify-between border-r border-[#3a3a43] rounded-2xl bg-[#1c1c24]">
       <div>
         <div className="border-t border-gray-800">
           <div className="px-2">
@@ -90,3 +90,7 @@ const Sidemenu = () => {
 };
 
 export default Sidemenu;
+
+
+
+

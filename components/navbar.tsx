@@ -18,13 +18,11 @@ const Navbar = () => {
     const fetchCampaigns = async () => {
       try {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const contractAddress = "0x6ed810a3f7c9c36370671b8bd6751be7519682c6";
+        const contractAddress = "0x11fdb66b6b6ff3d573dc79cb4dc2634150037f73";
         const contract = new ethers.Contract(contractAddress, abi, provider);
         const campaigns = await contract.getCampaigns();
-        console.log(campaigns);
         const campaignsData = await Promise.all(
-          campaigns.map(async (campaign: any[], index: number) => {
-            console.log(index);
+          campaigns.map(async (campaign, index) => {
             return {
               id: index,
               title: campaign[1],
@@ -59,16 +57,17 @@ const Navbar = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleCampaignClick = (campaignId: any) => {
+  const handleCampaignClick = (campaignId) => {
     router.push(`/browse/${campaignId}`);
+    setSearchQuery("");
   };
 
   return (
-    <nav className="bg-[#090909] relative">
+    <nav className="bg-[#090909] fixed w-full top-0 z-50">
       <div className="container mx-auto flex justify-between items-center px-4 md:px-0 py-4">
         <div className="flex items-center">
           <Link href="/">
-            <div className="flex items-center ml-5">
+            <div className="cursor-pointer ml-5">
               <div className="w-10 h-10 p-2 bg-[#1c1c24] rounded-lg mr-2">
                 <img src="/1.png" alt="logo" className="h-full" />
               </div>
@@ -140,7 +139,18 @@ const Navbar = () => {
       </div>
 
       {isOpen && (
-        <ul className="md:hidden bg-[#1c1c24] text-white w-full mt-2">
+        <ul className="md:hidden bg-[#1c1c24] text-white w-full mt-2 items-center">
+          <li>
+            <div className="flex items-center">
+            <input
+              type="text"
+              placeholder="Search for campaigns"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="px-4 py-2 mr-4 rounded-full placeholder-white bg-white focus:outline-none placeholder:text-black text-black"
+            />
+            <FaSearch className="w-6 h-6" /></div>
+          </li>
           <li>
             <Link href="/">
               <div className="block py-2 px-4 hover:text-gray-400">Home</div>
@@ -154,19 +164,14 @@ const Navbar = () => {
             </Link>
           </li>
           <li>
-            <Link href="/donate">
-              <div className="block py-2 px-4 hover:text-gray-400">Donate</div>
+            <Link href="/create">
+              <div className="block py-2 px-4 hover:text-gray-400">Create Campaigns</div>
             </Link>
           </li>
-          <li>
-            <button className="block py-2 px-4 bg-[#F7F7F2] text-[#005F69] hover:bg-gray-400">
-              Login
-            </button>
-          </li>
+        
         </ul>
       )}
 
-      {/* Display filtered campaigns */}
       {searchQuery && (
         <div className="absolute top-[calc(100%+10px)] left-0 w-[350px] ml-28 bg-white rounded-lg shadow-lg overflow-hidden">
           {filteredCampaigns.length === 0 ? (

@@ -49,7 +49,7 @@ const CampaignDetails = () => {
   const fetchCampaignDetails = async (slug: any) => {
     try {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const contractAddress = "0x6ed810a3f7c9c36370671b8bd6751be7519682c6";
+      const contractAddress = "0x11fdb66b6b6ff3d573dc79cb4dc2634150037f73";
       const contract = new ethers.Contract(contractAddress, abi, provider);
       const funders = await contract.getFunders(slug);
       const campaignDetails = await contract.getCampaign(slug);
@@ -82,7 +82,7 @@ const CampaignDetails = () => {
       }
 
       const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const contractAddress = "0x6ed810a3f7c9c36370671b8bd6751be7519682c6";
+      const contractAddress = "0x11fdb66b6b6ff3d573dc79cb4dc2634150037f73";
       const contract = new ethers.Contract(contractAddress, abi, provider);
 
       const donatedAmountWei = await contract.getCurrentDonatedAmount(slug);
@@ -116,10 +116,8 @@ const CampaignDetails = () => {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
 
-      const contractAddress = "0x6ed810a3f7c9c36370671b8bd6751be7519682c6";
+      const contractAddress = "0x11fdb66b6b6ff3d573dc79cb4dc2634150037f73";
       const contract = new ethers.Contract(contractAddress, abi, signer);
-
-      v
       
 
       const amountInEther = parseFloat(donationAmount);
@@ -175,7 +173,7 @@ const CampaignDetails = () => {
   const deadline = convertUnixTimestampToDate(campaign.deadline);
 
   return (
-    <div className="bg-[#090909] ">
+    <div className="bg-[#090909] mt-16 items-center mb">
       <div>
         <Sidemenu />
       </div>
@@ -248,7 +246,7 @@ const CampaignDetails = () => {
                   value={donationAmount}
                   onChange={(e) => setDonationAmount(e.target.value)}
                   placeholder="(ETH)"
-                  className="border border-[#808191] ml-6 rounded-md px-5 w-[300px] focus:outline-none focus:border-emerald-500 text-black mt-3"
+                  className="border border-[#808191] ml-6 mr-4 rounded-md px-5 w-[300px] focus:outline-none focus:border-emerald-500 text-black mt-3"
                 />
                 <div className="bg-black rounded-xl mt-3 px-5 pl-2 pr-2 ml-6 mr-6">
                   <h1 className="text-white font-semibold pt-2">
@@ -261,7 +259,7 @@ const CampaignDetails = () => {
                 </div>
                 <button
                   onClick={handleDonate}
-                  className="text-white font-poppins font-semibold bg-indigo-500 hover:bg-emerald-600 px-5 py-2 rounded-md mt-3 w-[300px] ml-6"
+                  className="text-white font-poppins font-semibold bg-indigo-500 hover:bg-emerald-600 px-5 py-2 rounded-md mt-3 w-[300px] ml-6 mb-3"
                 >
                   Donate
                 </button>

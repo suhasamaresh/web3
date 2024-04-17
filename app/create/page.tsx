@@ -54,7 +54,7 @@ const Create = () => {
       // Initialize campaign contract instance
       const abi = CampaignContract;
       const campaignContract = new ethers.Contract(
-        "0x6ed810a3f7c9c36370671b8bd6751be7519682c6",
+        "0x11fdb66b6b6ff3d573dc79cb4dc2634150037f73",
         abi,
         signer
       );
@@ -113,7 +113,7 @@ const Create = () => {
   return (
     <div>
       <Sidemenu />
-      <div className="bg-black min-h-screen px-4 sm:px-6 lg:px-8 flex justify-center items-center pb-2 pt-10">
+      <div className="bg-black mt-16 min-h-screen px-4 sm:px-6 lg:px-8 flex justify-center items-center pb-2 pt-10">
         <div className="max-w-3xl w-full bg-[#1c1c24] px-4 py-8 sm:px-6 lg:px-8 rounded-xl">
           <div className="bg-[#3a3a43] rounded-xl p-4">
             <h1 className="text-white text-2xl font-semibold text-center">
