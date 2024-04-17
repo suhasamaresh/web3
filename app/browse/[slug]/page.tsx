@@ -26,7 +26,7 @@ const CampaignDetails = () => {
   }, [pathname]);
 
   useEffect(() => {
-    if (typeof window !== "undefined" && window.ethereum) {
+    if (typeof window !== "undefined" ) {
       window.ethereum.on("accountsChanged", () => {
         window.location.reload();
       });
