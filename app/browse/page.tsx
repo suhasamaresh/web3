@@ -20,7 +20,6 @@ const firebaseConfig = {
   measurementId: "G-JXTJ7CLHNG",
 };
 
-
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
@@ -37,7 +36,9 @@ const Page = () => {
 
   const fetchData = async () => {
     try {
-      const provider = new ethers.providers.Web3Provider((window as any).ethereum);
+      const provider = new ethers.providers.Web3Provider(
+        (window as any).ethereum
+      );
       const contractAddress = "0x11fdb66b6b6ff3d573dc79cb4dc2634150037f73";
       const contract = new ethers.Contract(contractAddress, abi, provider);
 
@@ -67,9 +68,13 @@ const Page = () => {
 
       // Sort campaigns based on the selected filter
       if (filter === "mostRecent") {
-        formattedCampaigns.sort((a, b) => b.creationTimestamp - a.creationTimestamp);
+        formattedCampaigns.sort(
+          (a, b) => b.creationTimestamp - a.creationTimestamp
+        );
       } else if (filter === "mostPopular") {
-        formattedCampaigns.sort((a, b) => b.amountCollected - a.amountCollected);
+        formattedCampaigns.sort(
+          (a, b) => b.amountCollected - a.amountCollected
+        );
       }
 
       setCampaigns((formattedCampaigns as any).slice(startIndex, endIndex));
@@ -86,12 +91,12 @@ const Page = () => {
     setCurrentPage(currentPage - 1);
   };
 
-  const handleFilterChange = (selectedFilter :any) => {
+  const handleFilterChange = (selectedFilter: any) => {
     setFilter(selectedFilter);
   };
 
   return (
-    <div className="bg-[#090909] mt-16">
+    <div className="bg-[#090909] mt-16 lg:pb-12">
       <div>
         <Sidemenu />
       </div>
@@ -101,7 +106,9 @@ const Page = () => {
             All Campaigns
           </h1>
           <div className="flex items-center space-x-4">
-            <span className="text-white font-semibold font-poppins">Filter by:</span>
+            <span className="text-white font-semibold font-poppins">
+              Filter by:
+            </span>
             <select
               className="text-white bg-emerald-600 rounded-2xl p-2 focus:outline-none"
               value={filter}
@@ -112,9 +119,9 @@ const Page = () => {
             </select>
           </div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 ">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:h-screen">
           {campaigns.map((camp, index) => (
-            <Link key={index} href={`/browse/${(camp as any).id}`}>
+            <Link key={index} href={`/browse/${camp.id}`}>
               <div className="block">
                 <div className="bg-[#1c1c24] rounded-xl overflow-hidden shadow-lg border-emerald-600 border-2 focus:outline-none hover:border-[#808191]">
                   <img
@@ -123,22 +130,26 @@ const Page = () => {
                     alt={`Campaign ${index}`}
                   />
                   <div className="p-4">
-                    <h2 className="text-xl font-semibold mb-2 text-white">
+                    <h2 className="text-xl font-semibold mb-2 text-white overflow-hidden whitespace-nowrap overflow-ellipsis">
                       {(camp as any).title}
                     </h2>
                     <div className="h-10 overflow-hidden">
                       <p className="text-[#808191] ">{(camp as any).description}</p>
                     </div>
-                    <p className="text-[#808191]"><span className="text-white font-semibold">Owner:</span> {(camp as any).owner}</p>
+                    <p className="text-[#808191]">
+                      <span className="text-white font-semibold">Owner:</span>{" "}
+                      {(camp as any).owner}
+                    </p>
                     <div className="flex justify-between">
                       <div className="text-[#808191] flex flex-col">
-                        <p className="text-white font-semibold">Amount amountCollected:</p>
-                        <p className="text-[#808191]">
-                          {(camp as any).amountCollected}
+                        <p className="text-white font-semibold">
+                          Amount amountCollected:
                         </p>
+                        <p className="text-[#808191]">{(camp as any).amountCollected}</p>
                       </div>
                       <div className="text-[#808191] flex flex-col">
-                        <p className="text-white font-semibold">Target:</p> <p>{(camp as any).target}</p>
+                        <p className="text-white font-semibold">Target:</p>{" "}
+                        <p>{(camp as any).target}</p>
                       </div>
                     </div>
                     <p className="text-[#808191] mt-1 hover:text-emerald-600">
@@ -154,7 +165,7 @@ const Page = () => {
           {currentPage > 1 && (
             <button
               onClick={handlePreviousPage}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-4"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-4 lg:mt-40 mb-4"
             >
               Previous
             </button>
@@ -162,7 +173,7 @@ const Page = () => {
           {campaigns.length === campaignsPerPage && (
             <button
               onClick={handleNextPage}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded lg:mt-40 mb-4"
             >
               Next
             </button>
