@@ -2,6 +2,8 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 **Imp Note** - The Smart contract used in the application is deployed using remix ide online!
 
+check out the application progress : (https://fundit-crowdfuning.vercel.app/)
+
 ## Getting Started
 
 First, run the development server:
