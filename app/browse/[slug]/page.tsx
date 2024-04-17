@@ -216,7 +216,7 @@ const CampaignDetails = () => {
               </div>
             </div>
           </div>
-          <div className="lg:flex items-center justify-between mt-10 pl-10 pr-10 lg:pl-0 lg:pr-0">
+          <div className="lg:flex items-center justify-between mt-10 pl-10 pr-10 lg:pl-0 lg:pr-0 ">
             <div className="mt-10">
               <h1 className="font-poppins font-medium text-white">CREATOR</h1>
               <p className="text-white">{(campaign as any).owner}</p>
@@ -232,7 +232,7 @@ const CampaignDetails = () => {
                 DONATORS
               </h1>
               <p className="text-[#808191]">
-                Funders' Addresses: {(campaign as any).funders.join(", ")}
+                Funders' Addresses: <div className=" max-w-[700px] max-h-[200px] overflow-hidden">{(campaign as any).funders.join(", ")}</div>
               </p>
             </div>
             <div className="mt-4 w-[350px] align-middle mr-32 ml-5 lg:ml-0">
