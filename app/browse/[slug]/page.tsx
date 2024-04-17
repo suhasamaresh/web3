@@ -48,28 +48,25 @@ const CampaignDetails = () => {
 
   const fetchCampaignDetails = async (slug: any) => {
     try {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const provider = new ethers.providers.Web3Provider((window as any).ethereum);
       const contractAddress = "0x11fdb66b6b6ff3d573dc79cb4dc2634150037f73";
       const contract = new ethers.Contract(contractAddress, abi, provider);
       const funders = await contract.getFunders(slug);
       const campaignDetails = await contract.getCampaign(slug);
       const currentDonatedAmount = await contract.getCurrentDonatedAmount(slug);
 
-      const formattedCampaign = {
-        owner: campaignDetails[0],
-        title: campaignDetails[1],
-        description: campaignDetails[2],
-        target: campaignDetails[3].toString(),
-        amountCollected: campaignDetails[4].toString(),
-        deadline: campaignDetails[5].toNumber(),
-        image: campaignDetails[6],
-        open: campaignDetails[7],
-        funders: funders,
-        fundings: currentDonatedAmount.toString(),
-      };
-
-      setCampaign(formattedCampaign);
-      setLoading(false);
+      const [campaign, setCampaign] = useState<null | {
+        owner: any;
+        title: any;
+        description: any;
+        target: any;
+        amountCollected: any;
+        deadline: any;
+        image: any;
+        open: any;
+        funders: any;
+        fundings: any;
+      }>(null);
     } catch (error) {
       console.error("Error fetching campaign details:", error);
     }
@@ -81,7 +78,7 @@ const CampaignDetails = () => {
         throw new Error("Slug or campaign not available");
       }
 
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const provider = new ethers.providers.Web3Provider((window as any).ethereum);
       const contractAddress = "0x11fdb66b6b6ff3d573dc79cb4dc2634150037f73";
       const contract = new ethers.Contract(contractAddress, abi, provider);
 
@@ -96,7 +93,7 @@ const CampaignDetails = () => {
 
   const connectToMetaMask = async () => {
     try {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const provider = new ethers.providers.Web3Provider((window as any).ethereum);
       await provider.send("eth_requestAccounts", []);
       const signer = provider.getSigner();
       const address = await signer.getAddress();
@@ -113,7 +110,7 @@ const CampaignDetails = () => {
         await connectToMetaMask();
       }
 
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const provider = new ethers.providers.Web3Provider((window as any).ethereum);
       const signer = provider.getSigner();
 
       const contractAddress = "0x11fdb66b6b6ff3d573dc79cb4dc2634150037f73";
@@ -137,7 +134,7 @@ const CampaignDetails = () => {
       const transaction = await contract.donate(slug, overrides);
 
       console.log("Donation transaction:", transaction);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error donating:", error.message);
     }
   };
