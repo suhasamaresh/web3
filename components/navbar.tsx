@@ -17,12 +17,12 @@ const Navbar = () => {
   useEffect(() => {
     const fetchCampaigns = async () => {
       try {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const provider = new ethers.providers.Web3Provider((window as any).ethereum);
         const contractAddress = "0x11fdb66b6b6ff3d573dc79cb4dc2634150037f73";
         const contract = new ethers.Contract(contractAddress, abi, provider);
         const campaigns = await contract.getCampaigns();
         const campaignsData = await Promise.all(
-          campaigns.map(async (campaign, index) => {
+          campaigns.map(async (campaign: any[], index: any) => {
             return {
               id: index,
               title: campaign[1],
@@ -36,8 +36,8 @@ const Navbar = () => {
           })
         );
 
-        setCampaigns(campaignsData);
-      } catch (error) {
+        setCampaigns(campaignsData as any);
+      } catch (error: any) {
         console.error("Error fetching campaigns:", error);
       }
     };
@@ -47,8 +47,8 @@ const Navbar = () => {
 
   useEffect(() => {
     setFilteredCampaigns(
-      campaigns.filter((campaign) =>
-        campaign.title.toLowerCase().includes(searchQuery.toLowerCase())
+      campaigns.filter((campaign ) =>
+        (campaign as any).title.toLowerCase().includes(searchQuery.toLowerCase())
       )
     );
   }, [searchQuery, campaigns]);
@@ -57,7 +57,7 @@ const Navbar = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleCampaignClick = (campaignId) => {
+  const handleCampaignClick = (campaignId: any) => {
     router.push(`/browse/${campaignId}`);
     setSearchQuery("");
   };
@@ -177,13 +177,13 @@ const Navbar = () => {
           {filteredCampaigns.length === 0 ? (
             <div className="px-4 py-2">No campaigns found</div>
           ) : (
-            filteredCampaigns.map((campaign) => (
+            filteredCampaigns.map((campaign: { id: string }) => (
               <div
                 key={campaign.id}
                 className="px-4 py-2 cursor-pointer hover:bg-gray-100"
                 onClick={() => handleCampaignClick(campaign.id)}
               >
-                {campaign.title}
+                {(campaign as any).title}
               </div>
             ))
           )}

@@ -34,7 +34,7 @@ const Create = () => {
   });
 
   // Function to handle form input changes
-  const handleChange = (event) => {
+  const handleChange = (event: { target: { files?: any; name?: any; value?: any; type?: any; }; }) => {
     const { name, value, type } = event.target;
     const val = type === "file" ? event.target.files[0] : value;
     setFormData({ ...formData, [name]: val });
@@ -42,12 +42,12 @@ const Create = () => {
 
   // Function to handle form submission
   // Function to handle form submission
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: { preventDefault: () => void; }) => {
     event.preventDefault();
 
     try {
       // Connect to Ethereum network
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const provider = new ethers.providers.Web3Provider((window as any).ethereum);
       await provider.send("eth_requestAccounts", []);
       const signer = provider.getSigner();
 
@@ -75,7 +75,7 @@ const Create = () => {
         const campaignsArray = await campaignContract.getCampaigns();
         const imageIndex = campaignsArray.length;
         const imageRef = storageRef.child(
-          `image_${imageIndex}.${file.name.split(".").pop()}`
+          `image_${imageIndex}.${(file as any).name.split(".").pop()}`
         );
         await imageRef.put(file);
         const imageUrl = await imageRef.getDownloadURL();
@@ -163,7 +163,7 @@ const Create = () => {
                 value={formData.description}
                 onChange={handleChange}
                 placeholder="Campaign Description"
-                rows="4"
+                rows={parseInt("4")}
                 className="input-field bg-transparent placeholder:text-[#808191] border-[#808191] border-2 rounded-xl p-2 w-full focus:outline-none focus:border-emerald-500 text-white"
               ></textarea>
             </div>

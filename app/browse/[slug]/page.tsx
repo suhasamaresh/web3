@@ -26,7 +26,7 @@ const CampaignDetails = () => {
   }, [pathname]);
 
   useEffect(() => {
-    if (typeof window !== "undefined" ) {
+    if (typeof window !== "undefined" && (window as any).ethereum) {
       (window as any).ethereum.on("accountsChanged", () => {
         window.location.reload();
       });
@@ -55,18 +55,21 @@ const CampaignDetails = () => {
       const campaignDetails = await contract.getCampaign(slug);
       const currentDonatedAmount = await contract.getCurrentDonatedAmount(slug);
 
-      const [campaign, setCampaign] = useState<null | {
-        owner: any;
-        title: any;
-        description: any;
-        target: any;
-        amountCollected: any;
-        deadline: any;
-        image: any;
-        open: any;
-        funders: any;
-        fundings: any;
-      }>(null);
+      const formattedCampaign = {
+        owner: campaignDetails[0],
+        title: campaignDetails[1],
+        description: campaignDetails[2],
+        target: campaignDetails[3].toString(),
+        amountCollected: campaignDetails[4].toString(),
+        deadline: campaignDetails[5].toNumber(),
+        image: campaignDetails[6],
+        open: campaignDetails[7],
+        funders: funders,
+        fundings: currentDonatedAmount.toString(),
+      };
+
+      setCampaign(formattedCampaign as any);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching campaign details:", error);
     }
@@ -134,7 +137,7 @@ const CampaignDetails = () => {
       const transaction = await contract.donate(slug, overrides);
 
       console.log("Donation transaction:", transaction);
-    } catch (error: any) {
+    } catch (error:any) {
       console.error("Error donating:", error.message);
     }
   };
@@ -152,7 +155,7 @@ const CampaignDetails = () => {
   }
 
   const progress =
-    ((campaign.amountCollected + currentDonatedAmount) / campaign.target) * 100;
+    (((campaign as any).amountCollected + currentDonatedAmount) / (campaign as any).target) * 100;
 
   function convertUnixTimestampToDate(unixTimestamp: number) {
     const date = new Date(unixTimestamp * 1000);
@@ -166,8 +169,8 @@ const CampaignDetails = () => {
     return formattedDate;
   }
 
-  const amountcollected = ethers.utils.formatEther(campaign.amountCollected);
-  const deadline = convertUnixTimestampToDate(campaign.deadline);
+  const amountcollected = ethers.utils.formatEther((campaign as any).amountCollected);
+  const deadline = convertUnixTimestampToDate((campaign as any).deadline);
 
   return (
     <div className="bg-[#090909] mt-16 items-center pb-10">
@@ -179,7 +182,7 @@ const CampaignDetails = () => {
           <div className="lg:flex align-middle items-center justify-between">
             <div className="">
               <img
-                src={campaign.image}
+                src={(campaign as any).image}
                 alt="Campaign"
                 className="w-[750px] h-[350px] rounded-lg pl-20 pr-20 lg:pl-0 lg:pr-0"
               />
@@ -204,7 +207,7 @@ const CampaignDetails = () => {
                 </div>
                 <div className="flex flex-col">
                   <p className="text-[#808191] mb-2 bg-[#1c1c24] rounded-lg p-3 text-center">
-                    {campaign.funders.length}{" "}
+                    {(campaign as any).funders.length}{" "}
                     <div className="bg-black text-[#808191] rounded-lg text-center px-2 py-1">
                       Total Funders
                     </div>
@@ -216,20 +219,20 @@ const CampaignDetails = () => {
           <div className="lg:flex items-center justify-between mt-10 pl-10 pr-10 lg:pl-0 lg:pr-0">
             <div className="mt-10">
               <h1 className="font-poppins font-medium text-white">CREATOR</h1>
-              <p className="text-white">{campaign.owner}</p>
+              <p className="text-white">{(campaign as any).owner}</p>
               <h1 className="font-poppins font-medium text-white pt-3">
                 TITLE
               </h1>
-              <p className="text-[#808191]">{campaign.title}</p>
+              <p className="text-[#808191]">{(campaign as any).title}</p>
               <h1 className="font-poppins font-medium text-white pt-3">
                 DESCRIPTION
               </h1>
-              <p className="text-[#808191]">Story: {campaign.description}</p>
+              <p className="text-[#808191]">Story: {(campaign as any).description}</p>
               <h1 className="font-poppins font-medium text-white pt-3">
                 DONATORS
               </h1>
               <p className="text-[#808191]">
-                Funders' Addresses: {campaign.funders.join(", ")}
+                Funders' Addresses: {(campaign as any).funders.join(", ")}
               </p>
             </div>
             <div className="mt-4 w-[350px] align-middle mr-32 ml-5 lg:ml-0">

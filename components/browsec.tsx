@@ -15,14 +15,14 @@ const Browsec = () => {
   const fetchData = async () => {
     try {
       // Your existing code to fetch campaigns from the contract
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const provider = new ethers.providers.Web3Provider((window as any).ethereum);
       const contractAddress = "0x11fdb66b6b6ff3d573dc79cb4dc2634150037f73";
       const contract = new ethers.Contract(contractAddress, abi, provider);
 
       const campaignsArray = await contract.getCampaigns();
 
       const formattedCampaigns = await Promise.all(
-        campaignsArray.map(async (campaign, index) => {
+        campaignsArray.map(async (campaign: any[], index: any) => {
           return {
             id: index, // Assuming the index is the campaign ID
             owner: campaign[0],
@@ -44,8 +44,8 @@ const Browsec = () => {
       formattedCampaigns.sort((a, b) => b.amountCollected - a.amountCollected);
       const slicedCampaigns = window.innerWidth < 640 ? formattedCampaigns.slice(0, 3) : formattedCampaigns.slice(0, 6);
       // Limit to the first six campaigns
-      setCampaigns(slicedCampaigns);
-    } catch (error) {
+      setCampaigns(slicedCampaigns as any);
+    } catch (error: any) {
       console.error("Error fetching campaigns:", error.message);
     }
   };
@@ -58,7 +58,7 @@ const Browsec = () => {
       <div className="container lg:h-[600px] h-[850px] rounded-xl border border-emerald-600">
         <div className="flex flex-wrap justify-center h-full">
           {/* Display campaign cards */}
-          {campaigns.map((campaign) => (
+          {campaigns.map((campaign:any) => (
             <div key={campaign.id} className="w-full sm:w-1/2 lg:w-1/3 p-2 sm:p-4">
               {/* Render your campaign card component */}
               <Link href={`/browse/${campaign.id}`} key={campaign.id}>

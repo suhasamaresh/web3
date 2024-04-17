@@ -37,7 +37,7 @@ const Page = () => {
 
   const fetchData = async () => {
     try {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const provider = new ethers.providers.Web3Provider((window as any).ethereum);
       const contractAddress = "0x11fdb66b6b6ff3d573dc79cb4dc2634150037f73";
       const contract = new ethers.Contract(contractAddress, abi, provider);
 
@@ -47,7 +47,7 @@ const Page = () => {
       const campaignsArray = await contract.getCampaigns();
 
       const formattedCampaigns = await Promise.all(
-        campaignsArray.map(async (campaign, index) => {
+        campaignsArray.map(async (campaign: any[], index: any) => {
           return {
             id: index, // Assuming the index is the campaign ID
             owner: campaign[0],
@@ -72,8 +72,8 @@ const Page = () => {
         formattedCampaigns.sort((a, b) => b.amountCollected - a.amountCollected);
       }
 
-      setCampaigns(formattedCampaigns.slice(startIndex, endIndex));
-    } catch (error) {
+      setCampaigns((formattedCampaigns as any).slice(startIndex, endIndex));
+    } catch (error: any) {
       console.error("Error fetching campaigns:", error.message);
     }
   };
@@ -86,7 +86,7 @@ const Page = () => {
     setCurrentPage(currentPage - 1);
   };
 
-  const handleFilterChange = (selectedFilter) => {
+  const handleFilterChange = (selectedFilter :any) => {
     setFilter(selectedFilter);
   };
 
@@ -114,31 +114,31 @@ const Page = () => {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 ">
           {campaigns.map((camp, index) => (
-            <Link key={index} href={`/browse/${camp.id}`}>
+            <Link key={index} href={`/browse/${(camp as any).id}`}>
               <div className="block">
                 <div className="bg-[#1c1c24] rounded-xl overflow-hidden shadow-lg border-emerald-600 border-2 focus:outline-none hover:border-[#808191]">
                   <img
                     className="w-full sm:h-48 h-32 object-cover rounded-xl"
-                    src={camp.image}
+                    src={(camp as any).image}
                     alt={`Campaign ${index}`}
                   />
                   <div className="p-4">
                     <h2 className="text-xl font-semibold mb-2 text-white">
-                      {camp.title}
+                      {(camp as any).title}
                     </h2>
                     <div className="h-10 overflow-hidden">
-                      <p className="text-[#808191] ">{camp.description}</p>
+                      <p className="text-[#808191] ">{(camp as any).description}</p>
                     </div>
-                    <p className="text-[#808191]"><span className="text-white font-semibold">Owner:</span> {camp.owner}</p>
+                    <p className="text-[#808191]"><span className="text-white font-semibold">Owner:</span> {(camp as any).owner}</p>
                     <div className="flex justify-between">
                       <div className="text-[#808191] flex flex-col">
                         <p className="text-white font-semibold">Amount amountCollected:</p>
                         <p className="text-[#808191]">
-                          {camp.amountCollected}
+                          {(camp as any).amountCollected}
                         </p>
                       </div>
                       <div className="text-[#808191] flex flex-col">
-                        <p className="text-white font-semibold">Target:</p> <p>{camp.target}</p>
+                        <p className="text-white font-semibold">Target:</p> <p>{(camp as any).target}</p>
                       </div>
                     </div>
                     <p className="text-[#808191] mt-1 hover:text-emerald-600">
