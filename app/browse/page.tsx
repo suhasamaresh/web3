@@ -121,7 +121,7 @@ const Page = () => {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:h-screen">
           {campaigns.map((camp, index) => (
-            <Link key={index} href={`/browse/${camp.id}`}>
+            <Link key={index} href={`/browse/${(camp as any).id}`}>
               <div className="block">
                 <div className="bg-[#1c1c24] rounded-xl overflow-hidden shadow-lg border-emerald-600 border-2 focus:outline-none hover:border-[#808191]">
                   <img
